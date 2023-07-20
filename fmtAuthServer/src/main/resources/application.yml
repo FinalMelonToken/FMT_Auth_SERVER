@@ -1,0 +1,22 @@
+spring:
+  security:
+    user:
+      name: admin
+      password: 12
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://localhost:3306/dgsw
+    username: root
+    password: gnpp0310
+  jpa:
+    hibernate:
+      ddl-auto: update
+    show-sql: true
+server:
+  port: 8090
+
+jwt:
+  access:
+    secret: qwerewqwerewqwewqwerwqwerewerewerwerwerqwerewqwerewqwewqwerwqwerewerewerwerwerqwerewqwerewqwewqwerwqwerewerewerwerwer
+  refresh:
+    secret: qwerewqwerewqwewqwerwqwerewerewerwerwerqwerewqwerewqwewqwerwqwerewerewerwerwerqwerewqwerewqwewqwerwqwerewerewerwerwer
