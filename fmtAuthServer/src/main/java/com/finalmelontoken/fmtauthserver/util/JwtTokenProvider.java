@@ -1,7 +1,7 @@
 package com.finalmelontoken.fmtauthserver.util;
 
 import com.finalmelontoken.fmtauthserver.domain.TokenInfo;
-import com.finalmelontoken.fmtauthserver.exception.BaseException;
+import com.finalmelontoken.fmtauthserver.exception.GlobalException;
 import io.jsonwebtoken.*;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
@@ -89,13 +89,13 @@ public class JwtTokenProvider {
             Jwts.parser().setSigningKey(accessKey).parseClaimsJws(token);
             return true;
         } catch (io.jsonwebtoken.security.SecurityException | MalformedJwtException e) {
-            throw new BaseException(HttpStatus.UNAUTHORIZED, "Invalid JWT Token");
+            throw new GlobalException(HttpStatus.UNAUTHORIZED, "Invalid JWT Token");
         } catch (ExpiredJwtException e) {
-            throw new BaseException(HttpStatus.UNAUTHORIZED, "Expired JWT Token");
+            throw new GlobalException(HttpStatus.UNAUTHORIZED, "Expired JWT Token");
         } catch (UnsupportedJwtException e) {
-            throw new BaseException(HttpStatus.UNAUTHORIZED, "Unsupported JWT Token");
+            throw new GlobalException(HttpStatus.UNAUTHORIZED, "Unsupported JWT Token");
         } catch (IllegalArgumentException e) {
-            throw new BaseException(HttpStatus.UNAUTHORIZED, "JWT claims string is empty.");
+            throw new GlobalException(HttpStatus.UNAUTHORIZED, "JWT claims string is empty.");
         }
     }
     // refresh 토큰 정보를 검증하는 메서드
@@ -104,13 +104,13 @@ public class JwtTokenProvider {
             Jwts.parser().setSigningKey(refreshKey).parseClaimsJws(token).getBody();
             return true;
         } catch (io.jsonwebtoken.security.SecurityException | MalformedJwtException e) {
-            throw new BaseException(HttpStatus.BAD_REQUEST, "Invalid JWT Token");
+            throw new GlobalException(HttpStatus.BAD_REQUEST, "Invalid JWT Token");
         } catch (ExpiredJwtException e) {
-            throw new BaseException(HttpStatus.BAD_REQUEST, "Expired JWT Token");
+            throw new GlobalException(HttpStatus.BAD_REQUEST, "Expired JWT Token");
         } catch (UnsupportedJwtException e) {
-            throw new BaseException(HttpStatus.BAD_REQUEST, "Unsupported JWT Token");
+            throw new GlobalException(HttpStatus.BAD_REQUEST, "Unsupported JWT Token");
         } catch (IllegalArgumentException e) {
-            throw new BaseException(HttpStatus.BAD_REQUEST, "JWT claims string is empty.");
+            throw new GlobalException(HttpStatus.BAD_REQUEST, "JWT claims string is empty.");
         }
     }
 

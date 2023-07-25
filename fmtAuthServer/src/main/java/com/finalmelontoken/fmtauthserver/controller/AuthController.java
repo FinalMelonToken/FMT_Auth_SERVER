@@ -1,7 +1,7 @@
 package com.finalmelontoken.fmtauthserver.controller;
 
 import com.finalmelontoken.fmtauthserver.domain.AuthKey;
-import com.finalmelontoken.fmtauthserver.domain.MailDto;
+import com.finalmelontoken.fmtauthserver.domain.Mail;
 import com.finalmelontoken.fmtauthserver.domain.User;
 import com.finalmelontoken.fmtauthserver.service.AuthKeyService;
 import com.finalmelontoken.fmtauthserver.service.MailService;
@@ -18,7 +18,6 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 import java.time.Instant;
-import java.time.LocalDate;
 
 @Controller
 @RequestMapping("/")
@@ -37,9 +36,15 @@ public class AuthController {
         return new ResponseEntity("localhost:8080/oauth2/authorization/google", HttpStatus.OK);
     }
 
-    @GetMapping("success")
+    @GetMapping("auth-result")
     public String success(Authentication auth, Model model) {
+        if (auth == null) {
+            return "join/fail";
+        }
         User user = userService.getUserByLoginId(auth.getName());
+        if (user == null) {
+            return "join/fail";
+        }
         String key = randomStringUtil.generateRandomString(6);
         AuthKey authKey = AuthKey.builder()
                 .authKey(key)
@@ -51,10 +56,10 @@ public class AuthController {
             System.out.println("만료되었어요");
             authKeyService.deleteKey(user.getEmail());
         }
-
+        
         if (!authKeyService.isExistKey(user.getEmail())) {
             authKeyService.saveKey(authKey);
-            mailService.sendSimpleMessage(MailDto.builder()
+            mailService.sendSimpleMessage(Mail.builder()
                     .id(1L)
                     .email(user.getEmail())
                     .name("정말 대소고 학생이세요??? - 이메일 인증 코드입니당")
@@ -70,16 +75,6 @@ public class AuthController {
         return "join/success";
     }
 
-    @GetMapping("fail")
-    public ResponseEntity fail(Authentication auth) {
-        if (auth != null) {
-            System.out.println(auth.getName());
-        } else {
-            System.out.println("값이 없어요");
-        }
-        return new ResponseEntity("실패", HttpStatus.OK);
-    }
-//
 //    @PostMapping("/up")
 //    public ResponseEntity<?> signUp(@RequestBody User user) {
 //        return new ResponseEntity<>(

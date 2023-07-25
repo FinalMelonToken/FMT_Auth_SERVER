@@ -13,6 +13,6 @@ public class UserService {
     private final UserRepository userRepository;
 
     public User getUserByLoginId(String loginId) {
-        return userRepository.findByLoginId(loginId).get();
+        return userRepository.findByLoginId(loginId).orElse(null);
     }
 }

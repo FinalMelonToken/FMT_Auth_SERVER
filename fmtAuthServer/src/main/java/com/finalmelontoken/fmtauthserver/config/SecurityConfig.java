@@ -22,7 +22,6 @@ public class SecurityConfig {
         http
                 .csrf().disable()
                 .authorizeRequests()
-                    .antMatchers("/success").hasAuthority(UserRole.ROLE_USER.name())
                     .anyRequest().permitAll()
                 .and()
                     .logout()
@@ -31,8 +30,8 @@ public class SecurityConfig {
                 .and()
                     .oauth2Login()
                         .loginPage("/login")
-                        .defaultSuccessUrl("/success")
-                        .failureUrl("/fail")
+                        .defaultSuccessUrl("/auth-result")
+                        .failureUrl("/auth-result")
                         .userInfoEndpoint()
                     .userService(principalOauth2UserService);
 //        http

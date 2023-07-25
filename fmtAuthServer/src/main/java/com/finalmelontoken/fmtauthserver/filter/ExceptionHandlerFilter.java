@@ -1,7 +1,7 @@
 package com.finalmelontoken.fmtauthserver.filter;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.finalmelontoken.fmtauthserver.exception.BaseException;
+import com.finalmelontoken.fmtauthserver.exception.GlobalException;
 import com.finalmelontoken.fmtauthserver.exception.ExceptionResponseDto;
 import javax.servlet.FilterChain;
 import javax.servlet.ServletException;
@@ -24,13 +24,13 @@ public class ExceptionHandlerFilter extends OncePerRequestFilter {
 
         try {
             filterChain.doFilter(request, response);
-        } catch (BaseException e) {
+        } catch (GlobalException e) {
             setErrorResponse(response, e);
         }
     }
     private void setErrorResponse(
             HttpServletResponse response,
-            BaseException exception
+            GlobalException exception
     ) {
         ObjectMapper objectMapper = new ObjectMapper();
         response.setStatus(exception.getHttpStatus().value());
