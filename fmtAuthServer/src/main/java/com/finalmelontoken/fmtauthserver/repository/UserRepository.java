@@ -2,12 +2,11 @@ package com.finalmelontoken.fmtauthserver.repository;
 
 import com.finalmelontoken.fmtauthserver.domain.User;
 import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
+
+import java.util.Optional;
 
 @Repository
 public interface UserRepository extends JpaRepository<User, Long> {
-    public User findById(String id);
-
-    public void updateByRefreshToken(String refreshToken);
+    Optional<User> findByLoginId(String loginId);
 }

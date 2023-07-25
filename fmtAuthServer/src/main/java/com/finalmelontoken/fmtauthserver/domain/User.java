@@ -1,8 +1,10 @@
 package com.finalmelontoken.fmtauthserver.domain;
 
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.ColumnDefault;
 
 import javax.persistence.*;
 
@@ -10,23 +12,34 @@ import javax.persistence.*;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
+@Builder
 public class User {
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+
     @Id
-    private long idx;
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
 
-    @Column(name = "id")
-    private String id;
+    @Column(nullable = false)
+    private String loginId;
 
-    @Column(name = "pw")
-    private String pw;
+    private String password;
 
-    @Column(name = "email")
+    @Column(nullable = false)
+    private String nickname;
+
+    @Column(nullable = false)
     private String email;
 
-    @Column(name = "point")
-    private long point;
+    @Column(nullable = false)
+    private UserRole role;
 
-    @Column(name = "refresh_token")
-    private String refreshToken;
+    @Column(nullable = false)
+    private Long point;
+
+    // OAuth
+    @Column(nullable = false)
+    private String provider;
+
+    @Column(nullable = false)
+    private String providerId;
 }

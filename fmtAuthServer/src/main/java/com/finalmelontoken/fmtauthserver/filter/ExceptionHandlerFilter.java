@@ -22,16 +22,16 @@ public class ExceptionHandlerFilter extends OncePerRequestFilter {
             FilterChain filterChain
     ) throws ServletException, IOException {
 
-        try{
+        try {
             filterChain.doFilter(request, response);
-        }catch (BaseException e){
+        } catch (BaseException e) {
             setErrorResponse(response, e);
         }
     }
     private void setErrorResponse(
             HttpServletResponse response,
             BaseException exception
-    ){
+    ) {
         ObjectMapper objectMapper = new ObjectMapper();
         response.setStatus(exception.getHttpStatus().value());
         response.setContentType(MediaType.APPLICATION_JSON_VALUE);
@@ -40,9 +40,9 @@ public class ExceptionHandlerFilter extends OncePerRequestFilter {
                 .status(exception.getHttpStatus().value())
                 .error(exception.getHttpStatus())
                 .build();
-        try{
+        try {
             response.getWriter().write(objectMapper.writeValueAsString(errorResponse));
-        }catch (IOException e){
+        } catch (IOException e) {
             e.printStackTrace();
         }
     }
