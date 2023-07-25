@@ -22,26 +22,24 @@ import static org.springframework.security.config.Customizer.withDefaults;
 public class SecurityConfig {
     private final JwtTokenProvider jwtTokenProvider;
 
-//    @Bean
-//    public PasswordEncoder passwordEncoder() {
-//        return PasswordEncoderFactories.createDelegatingPasswordEncoder();
-//    }
+    /*@Bean
+    public PasswordEncoder passwordEncoder() {
+        return PasswordEncoderFactories.createDelegatingPasswordEncoder();
+    }*/
 
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http
-                .authorizeRequests()
-                .antMatchers("/api/v1/sign").permitAll()
-                .and()
                 .formLogin().disable()
                 .csrf().disable()
                 .headers().disable()
                 .httpBasic().disable()
-                .rememberMe().disable()
-                .logout().disable()
-                .addFilterBefore(new JwtAuthenticationFilter(jwtTokenProvider), UsernamePasswordAuthenticationFilter.class)
-                .addFilterBefore(new ExceptionHandlerFilter(), JwtAuthenticationFilter.class)
-                .httpBasic(withDefaults());
+                .authorizeRequests()
+                    .antMatchers("/api/v1/sign").permitAll()
+                .and()
+                    .addFilterBefore(new JwtAuthenticationFilter(jwtTokenProvider), UsernamePasswordAuthenticationFilter.class)
+                    .addFilterBefore(new ExceptionHandlerFilter(), JwtAuthenticationFilter.class)
+                    .httpBasic(withDefaults());
         return http.build();
     }
 }
