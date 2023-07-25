@@ -8,4 +8,5 @@ import org.springframework.stereotype.Repository;
 public interface AuthKeyRepository extends JpaRepository<AuthKey, Long> {
     public boolean existsAuthKeyByEmail(String email);
     public void deleteByEmail(String email);
+    public AuthKey findByEmail(String email);
 }

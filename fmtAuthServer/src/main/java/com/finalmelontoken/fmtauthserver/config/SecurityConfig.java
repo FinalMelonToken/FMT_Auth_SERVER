@@ -2,6 +2,7 @@ package com.finalmelontoken.fmtauthserver.config;
 
 import com.finalmelontoken.fmtauthserver.auth.oauth.PrincipalOauth2UserService;
 import com.finalmelontoken.fmtauthserver.domain.UserRole;
+import com.finalmelontoken.fmtauthserver.filter.ExceptionHandlerFilter;
 import com.finalmelontoken.fmtauthserver.util.JwtTokenProvider;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
@@ -9,6 +10,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
 @Configuration
 @EnableWebSecurity
@@ -34,9 +36,9 @@ public class SecurityConfig {
                         .failureUrl("/auth-result")
                         .userInfoEndpoint()
                     .userService(principalOauth2UserService);
-//        http
+        http
 //                .addFilterBefore(new JwtAuthenticationFilter(jwtTokenProvider), UsernamePasswordAuthenticationFilter.class)
-//                .addFilterBefore(new ExceptionHandlerFilter(), JwtAuthenticationFilter.class);
+                .addFilterBefore(new ExceptionHandlerFilter(), UsernamePasswordAuthenticationFilter.class);
         return http.build();
     }
 }

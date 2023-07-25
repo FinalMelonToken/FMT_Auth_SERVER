@@ -3,6 +3,8 @@ package com.finalmelontoken.fmtauthserver.controller;
 import com.finalmelontoken.fmtauthserver.domain.AuthKey;
 import com.finalmelontoken.fmtauthserver.domain.Mail;
 import com.finalmelontoken.fmtauthserver.domain.User;
+import com.finalmelontoken.fmtauthserver.domain.req.JoinRequest;
+import com.finalmelontoken.fmtauthserver.domain.res.ResponseDto;
 import com.finalmelontoken.fmtauthserver.service.AuthKeyService;
 import com.finalmelontoken.fmtauthserver.service.MailService;
 import com.finalmelontoken.fmtauthserver.service.UserService;
@@ -15,6 +17,8 @@ import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 import java.time.Instant;
@@ -30,11 +34,12 @@ public class AuthController {
     private final RandomStringUtil randomStringUtil;
     private final MailUtil mailUtil;
 
-    @GetMapping("login")
-    public ResponseEntity loginPage() {
-        System.out.println("asdads");
-        return new ResponseEntity("localhost:8080/oauth2/authorization/google", HttpStatus.OK);
-    }
+    // TODO: login구현
+//    @PostMapping("login")
+//    public ResponseEntity<?> loginPage() {
+//        System.out.println("asdads");
+//        return new ResponseEntity("localhost:8080/oauth2/authorization/google", HttpStatus.OK);
+//    }
 
     @GetMapping("auth-result")
     public String success(Authentication auth, Model model) {
@@ -52,11 +57,9 @@ public class AuthController {
                 .email(user.getEmail())
                 .build();
 
-        if (mailUtil.isExpiredMail(authKey.getCreatedTime())) {
-            System.out.println("만료되었어요");
+        if (mailUtil.isExpiredMail(authKey.getCreatedTime()))
             authKeyService.deleteKey(user.getEmail());
-        }
-        
+
         if (!authKeyService.isExistKey(user.getEmail())) {
             authKeyService.saveKey(authKey);
             mailService.sendSimpleMessage(Mail.builder()
@@ -75,16 +78,16 @@ public class AuthController {
         return "join/success";
     }
 
-//    @PostMapping("/up")
-//    public ResponseEntity<?> signUp(@RequestBody User user) {
-//        return new ResponseEntity<>(
-//                ResponseDto.builder()
-//                        .status(200)
-//                        .data(userService.register(user))
-//                        .build()
-//                , HttpStatus.OK
-//        );
-//    }
+    @PostMapping("/join")
+    public ResponseEntity<?> signUp(@RequestBody JoinRequest joinRequest) {
+        return new ResponseEntity<>(
+                ResponseDto.builder()
+                        .status(200)
+                        .data(userService.register(joinRequest))
+                        .build()
+                , HttpStatus.OK
+        );
+    }
 //
 //    @PostMapping("/in")
 //    public ResponseEntity<?> signIn(@RequestBody User user) {
