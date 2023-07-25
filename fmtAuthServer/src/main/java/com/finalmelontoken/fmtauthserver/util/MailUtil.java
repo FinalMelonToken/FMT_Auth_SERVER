@@ -3,17 +3,15 @@ package com.finalmelontoken.fmtauthserver.util;
 import org.springframework.stereotype.Component;
 
 import java.time.Duration;
-import java.time.LocalDate;
-import java.time.LocalDateTime;
+import java.time.Instant;
 
 @Component
 public class MailUtil {
 
-    public boolean isExpiredMail(LocalDate localDate) {
-        LocalDateTime now = LocalDateTime.now();
+    public boolean isExpiredMail(Instant instant) {
+        Instant now = Instant.now();
 
-        LocalDateTime targetDateTime = localDate.atStartOfDay();
-        Duration duration = Duration.between(targetDateTime, now);
+        Duration duration = Duration.between(instant, now);
         return duration.toMinutes() >= 5;
     }
 }

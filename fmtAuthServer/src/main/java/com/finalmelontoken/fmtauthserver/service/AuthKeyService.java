@@ -4,8 +4,10 @@ import com.finalmelontoken.fmtauthserver.domain.AuthKey;
 import com.finalmelontoken.fmtauthserver.repository.AuthKeyRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
+@Transactional
 @RequiredArgsConstructor
 public class AuthKeyService {
     private final AuthKeyRepository authKeyRepository;
@@ -19,6 +21,6 @@ public class AuthKeyService {
     }
 
     public void deleteKey(String email) {
-        authKeyRepository.deleteAuthKeyByEmail(email);
+        authKeyRepository.deleteByEmail(email);
     }
 }

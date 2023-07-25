@@ -6,7 +6,9 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
+import java.time.Instant;
 import java.time.LocalDate;
+import java.util.Date;
 
 @Data
 @Entity
@@ -25,6 +27,5 @@ public class AuthKey {
     private String authKey;
 
     @Column(nullable = false)
-    private LocalDate createdTime;
-
+    private Instant createdTime;
 }

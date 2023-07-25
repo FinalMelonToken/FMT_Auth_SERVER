@@ -17,6 +17,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 
+import java.time.Instant;
 import java.time.LocalDate;
 
 @Controller
@@ -42,11 +43,12 @@ public class AuthController {
         String key = randomStringUtil.generateRandomString(6);
         AuthKey authKey = AuthKey.builder()
                 .authKey(key)
-                .createdTime(LocalDate.now())
+                .createdTime(Instant.now())
                 .email(user.getEmail())
                 .build();
 
         if (mailUtil.isExpiredMail(authKey.getCreatedTime())) {
+            System.out.println("만료되었어요");
             authKeyService.deleteKey(user.getEmail());
         }
 
@@ -58,9 +60,13 @@ public class AuthController {
                     .name("정말 대소고 학생이세요??? - 이메일 인증 코드입니당")
                     .message(String.format("%s님 안녕하세요\n 인증 코드: %s", user.getNickname(), key))
                     .build());
+            model.addAttribute("msg", "이메일을 전송했어요!");
+        } else {
+            model.addAttribute("msg", "이미 전송을 완료했어요");
         }
 
         model.addAttribute("req", user);
+
         return "join/success";
     }
 
