@@ -13,7 +13,6 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
-
 import java.security.Key;
 import java.util.Arrays;
 import java.util.Collection;
@@ -33,72 +32,27 @@ public class JwtTokenProvider {
         this.refreshKey = Keys.hmacShaKeyFor(refreshKeyBytes);
     }
 
-    // 유저 정보를 가지고 AccessToken, RefreshToken 을 생성하는 메서드
-    public TokenInfo generateToken(Authentication authentication, String refreshCode) {
-
-        String authorities = authentication.getAuthorities().stream()
-                .map(GrantedAuthority::getAuthority)
-                .collect(Collectors.joining(","));
+    public TokenInfo generateToken(String email) {
 
         long now = (new Date()).getTime();
-        // Access Token 생성
-        Date accessTokenExpiresIn = new Date(now + (60000 * 60));  // 1시간
         String accessToken = Jwts.builder()
-                .setSubject(authentication.getName())
-                .claim("auth", authorities)
-                .setExpiration(accessTokenExpiresIn)
+                .setSubject(email)
+                .setExpiration(new Date(now + (60000 * 60))) // 1 hour
                 .signWith(accessKey, SignatureAlgorithm.HS256)
                 .compact();
 
         String refreshToken = Jwts.builder()
-                .setSubject(authentication.getName())
-                .claim("code", refreshCode)
-                .setExpiration(new Date(now + (60000 * 60 * 24 * 7)))   // 1주
+                .setSubject(email)
+                .setExpiration(new Date(now + (60000 * 60 * 24 * 7))) // 1 week
                 .signWith(refreshKey, SignatureAlgorithm.HS256)
                 .compact();
 
         return TokenInfo.builder()
-                .grantType("Bearer")
-                .accessToken(accessToken)
-                .refreshToken(refreshToken)
+                .accessToken("Bearer " + accessToken)
+                .refreshToken("Bearer " + refreshToken)
                 .build();
     }
 
-    // JWT 토큰을 복호화하여 토큰에 들어있는 정보를 꺼내는 메서드
-    public Authentication getAuthentication(String accessToken) {
-        // 토큰 복호화
-        Claims claims = getAccessAllClaims(accessToken);
-
-        if (claims.get("auth") == null) {
-            throw new RuntimeException("권한 정보가 없는 토큰입니다.");
-        }
-
-        // 클레임에서 권한 정보 가져오기
-        Collection<? extends GrantedAuthority> authorities =
-                Arrays.stream(claims.get("auth").toString().split(","))
-                        .map(SimpleGrantedAuthority::new)
-                        .collect(Collectors.toList());
-        // UserDetails 객체를 만들어서 Authentication 리턴
-        new org.springframework.security.core.userdetails.User(claims.getSubject(), "", authorities);
-        UserDetails principal = new org.springframework.security.core.userdetails.User(claims.getSubject(), "", authorities);
-        return new UsernamePasswordAuthenticationToken(principal, "", authorities);
-    }
-
-    public boolean validateToken(String token) {
-        try {
-            Jwts.parser().setSigningKey(accessKey).parseClaimsJws(token);
-            return true;
-        } catch (io.jsonwebtoken.security.SecurityException | MalformedJwtException e) {
-            throw new GlobalException(HttpStatus.UNAUTHORIZED, "Invalid JWT Token");
-        } catch (ExpiredJwtException e) {
-            throw new GlobalException(HttpStatus.UNAUTHORIZED, "Expired JWT Token");
-        } catch (UnsupportedJwtException e) {
-            throw new GlobalException(HttpStatus.UNAUTHORIZED, "Unsupported JWT Token");
-        } catch (IllegalArgumentException e) {
-            throw new GlobalException(HttpStatus.UNAUTHORIZED, "JWT claims string is empty.");
-        }
-    }
-    // refresh 토큰 정보를 검증하는 메서드
     public boolean validateRefreshToken(String token) {
         try {
             Jwts.parser().setSigningKey(refreshKey).parseClaimsJws(token).getBody();
@@ -114,45 +68,16 @@ public class JwtTokenProvider {
         }
     }
 
-    /**
-     * refresh 토큰의 Claim 디코딩
-     */
+    // 토큰에 이메일 저장함
+    public String getRefreshSubFromToken(String token) {
+        String email = getRefreshAllClaims(token).getSubject();
+        return email;
+    }
+
     private Claims getRefreshAllClaims(String token) {
         return Jwts.parser()
                 .setSigningKey(refreshKey)
                 .parseClaimsJws(token)
                 .getBody();
-    }
-    /**
-     * access 토큰의 Claim 디코딩
-     */
-    private Claims getAccessAllClaims(String token) {
-        return Jwts.parser()
-                .setSigningKey(accessKey)
-                .parseClaimsJws(token)
-                .getBody();
-    }
-    /**
-     * refresh token의 Claim 에서 sub 가져오기
-     */
-    public String getRefreshSubFromToken(String token) {
-        String username = getRefreshAllClaims(token).getSubject();
-        return username;
-    }
-
-    /**
-     * access token의 Claim 에서 sub 가져오기
-     */
-    public String getAccessSubFromToken(String token) {
-        String username = getAccessAllClaims(token).getSubject();
-        return username;
-    }
-
-    /**
-     * refresh token의 Claim 에서 code 가져오기
-     */
-    public String getRefreshCodeFromToken(String token) {
-        String code = String.valueOf(getRefreshAllClaims(token).get("code"));
-        return code;
     }
 }

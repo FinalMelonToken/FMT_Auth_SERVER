@@ -4,7 +4,9 @@ import com.finalmelontoken.fmtauthserver.domain.AuthKey;
 import com.finalmelontoken.fmtauthserver.domain.Mail;
 import com.finalmelontoken.fmtauthserver.domain.User;
 import com.finalmelontoken.fmtauthserver.domain.req.JoinRequest;
+import com.finalmelontoken.fmtauthserver.domain.req.LoginRequest;
 import com.finalmelontoken.fmtauthserver.domain.res.ResponseDto;
+import com.finalmelontoken.fmtauthserver.exception.GlobalException;
 import com.finalmelontoken.fmtauthserver.service.AuthKeyService;
 import com.finalmelontoken.fmtauthserver.service.MailService;
 import com.finalmelontoken.fmtauthserver.service.UserService;
@@ -16,10 +18,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.*;
 
 import java.time.Instant;
 
@@ -27,29 +26,18 @@ import java.time.Instant;
 @RequestMapping("/")
 @RequiredArgsConstructor
 public class AuthController {
-
     private final UserService userService;
     private final MailService mailService;
     private final AuthKeyService authKeyService;
     private final RandomStringUtil randomStringUtil;
     private final MailUtil mailUtil;
 
-    // TODO: login구현
-//    @PostMapping("login")
-//    public ResponseEntity<?> loginPage() {
-//        System.out.println("asdads");
-//        return new ResponseEntity("localhost:8080/oauth2/authorization/google", HttpStatus.OK);
-//    }
-
-    @GetMapping("auth-result")
+    @GetMapping("oauth-result")
     public String success(Authentication auth, Model model) {
-        if (auth == null) {
-            return "join/fail";
-        }
         User user = userService.getUserByLoginId(auth.getName());
-        if (user == null) {
-            return "join/fail";
-        }
+        if (user == null) return "join/fail";
+        System.out.println("정상적인 로그인 아이디");
+
         String key = randomStringUtil.generateRandomString(6);
         AuthKey authKey = AuthKey.builder()
                 .authKey(key)
@@ -57,12 +45,18 @@ public class AuthController {
                 .email(user.getEmail())
                 .build();
 
-        if (mailUtil.isExpiredMail(authKey.getCreatedTime()))
+        Instant keyCreatedTime = authKeyService.findByEmail(user.getEmail()).getCreatedTime();
+        if (mailUtil.isExpiredMail(keyCreatedTime)) {
             authKeyService.deleteKey(user.getEmail());
+        }
+
+        if (userService.findByEmail(user.getEmail()).getPassword() != null) {
+            model.addAttribute("msg", "이미 가입된 사용자입니다");
+        }
 
         if (!authKeyService.isExistKey(user.getEmail())) {
             authKeyService.saveKey(authKey);
-            mailService.sendSimpleMessage(Mail.builder()
+            mailService.sendMessage(Mail.builder()
                     .id(1L)
                     .email(user.getEmail())
                     .name("정말 대소고 학생이세요??? - 이메일 인증 코드입니당")
@@ -88,17 +82,26 @@ public class AuthController {
                 , HttpStatus.OK
         );
     }
-//
-//    @PostMapping("/in")
-//    public ResponseEntity<?> signIn(@RequestBody User user) {
-//        return new ResponseEntity<>(
-//                ResponseDto.builder()
-//                        .status(200)
-//                        .data(userService.login(user))
-//                        .build()
-//                , HttpStatus.OK
-//        );
-//    }
 
+    @PostMapping("/loin")
+    public ResponseEntity<?> signIn(@RequestBody LoginRequest loginRequest) {
+        return new ResponseEntity<>(
+                ResponseDto.builder()
+                        .status(200)
+                        .data(userService.login(loginRequest))
+                        .build()
+                , HttpStatus.OK
+        );
+    }
 
+    @PostMapping("/refresh")
+    public ResponseEntity<?> Refresh(@RequestHeader("Authorization") String token) {
+        return new ResponseEntity<>(
+                ResponseDto.builder()
+                        .status(200)
+                        .data(userService.refresh(token.substring(7)))
+                        .build()
+                , HttpStatus.OK
+        );
+    }
 }

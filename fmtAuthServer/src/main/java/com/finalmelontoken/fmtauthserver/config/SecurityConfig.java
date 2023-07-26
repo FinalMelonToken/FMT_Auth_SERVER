@@ -31,13 +31,11 @@ public class SecurityConfig {
                     .invalidateHttpSession(true).deleteCookies("JSESSIONID")
                 .and()
                     .oauth2Login()
-                        .loginPage("/login")
-                        .defaultSuccessUrl("/auth-result")
-                        .failureUrl("/auth-result")
+                        .defaultSuccessUrl("/oauth-result")
+                        .failureUrl("/fail")
                         .userInfoEndpoint()
                     .userService(principalOauth2UserService);
         http
-//                .addFilterBefore(new JwtAuthenticationFilter(jwtTokenProvider), UsernamePasswordAuthenticationFilter.class)
                 .addFilterBefore(new ExceptionHandlerFilter(), UsernamePasswordAuthenticationFilter.class);
         return http.build();
     }

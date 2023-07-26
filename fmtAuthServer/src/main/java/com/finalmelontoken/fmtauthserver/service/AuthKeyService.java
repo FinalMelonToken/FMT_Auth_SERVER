@@ -16,6 +16,10 @@ public class AuthKeyService {
         authKeyRepository.save(authKey);
     }
 
+    public AuthKey findByEmail(String email) {
+        return authKeyRepository.findByEmail(email);
+    }
+
     public boolean isExistKey(String email) {
         return authKeyRepository.existsAuthKeyByEmail(email);
     }
