@@ -35,13 +35,14 @@ public class UserService {
 
     public String register(JoinRequest joinRequest) {
 
-        if (!userRepository.existsByEmail(joinRequest.getEmail())) {
-            throw new GlobalException(HttpStatus.UNAUTHORIZED, "구글 인증부터 해주셈");
+        if (!userRepository.existsByEmail(joinRequest.getEmail()) || !authKeyRepository.existsAuthKeyByEmail(joinRequest.getEmail())) {
+            throw new GlobalException(HttpStatus.UNAUTHORIZED, "학생 구글 계정 인증 먼저 해주세요");
         }
 
-        if (!authKeyRepository.existsAuthKeyByEmail(joinRequest.getEmail())) {
-            throw new GlobalException(HttpStatus.UNAUTHORIZED, "구글 인증부터 해주셈");
+        if (userRepository.findByEmail(joinRequest.getEmail()).getPassword() != null) {
+            throw new GlobalException(HttpStatus.UNAUTHORIZED, "이미 가입된 사용자입니다");
         }
+
         AuthKey authKey = authKeyRepository.findByEmail(joinRequest.getEmail());
         if (!authKey.getAuthKey().equals(joinRequest.getAuthKey()) || mailUtil.isExpiredMail(authKey.getCreatedTime())) {
             throw new GlobalException(HttpStatus.UNAUTHORIZED, "잘못된 인증 코드입니다ㅜㅜ");
