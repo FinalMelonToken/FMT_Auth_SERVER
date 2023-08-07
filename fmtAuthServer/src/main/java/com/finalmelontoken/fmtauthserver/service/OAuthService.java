@@ -32,14 +32,18 @@ public class OAuthService {
     public String registerSchoolMail(String code) throws IOException {
         GoogleUserInfoDto userInfo = getGoogleUserInfoDto(code);
         String email = userInfo.getEmail();
-
+/*
         if (!mailUtil.isSchoolEmail(email)) {
-            throw new GlobalException(HttpStatus.BAD_REQUEST, "학교 이메일로 인증해 주세요");
-        } else if (userService.findByEmail(email) != null) {
-            throw new GlobalException(HttpStatus.BAD_REQUEST, "이미 가입된 사용자입니다");
+            return "학교 이메일로 인증해 주세요";
+//            throw new GlobalException(HttpStatus.BAD_REQUEST, "학교 이메일로 인증해 주세요");
+        } else if (userService.findByEmail(email).getPassword() != null) {
+            return "이미 가입된 사용자입니다";
+
+//            throw new GlobalException(HttpStatus.BAD_REQUEST, "이미 가입된 사용자입니다");
         } else if (!authKeyService.isExistKey(email)) {
-            throw new GlobalException(HttpStatus.BAD_REQUEST, "이미 메일을 전송했어요!");
-        }
+            return "이미 메일을 전송했어요!";
+//            throw new GlobalException(HttpStatus.BAD_REQUEST, "이미 메일을 전송했어요!");
+        }*/
 
         // 메일 인증 키 생성
         String authKey = randomStringUtil.generateRandomString(6);

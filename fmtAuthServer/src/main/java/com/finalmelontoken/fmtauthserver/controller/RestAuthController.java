@@ -33,8 +33,8 @@ public class RestAuthController {
     }*/
     @GetMapping ("/login/oauth2/code/google")
     public String registerSchoolMail(@RequestParam(name = "code") String code) throws IOException {
-        String message = oauthService.registerSchoolMail(code);
-        return "<script>window.opener.postMessage('messsssageeee', '*');window.close();</script>";
+        oauthService.registerSchoolMail(code);
+        return "<script>window.close();</script>";
     }
 
     @PostMapping("join")
