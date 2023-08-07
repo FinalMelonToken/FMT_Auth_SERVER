@@ -7,6 +7,8 @@ import lombok.Data;
 @AllArgsConstructor
 public class JoinRequest {
     private String email;
+
     private String authKey;
+
     private String password;
 }

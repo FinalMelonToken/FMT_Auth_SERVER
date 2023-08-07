@@ -4,6 +4,7 @@ import com.finalmelontoken.fmtauthserver.domain.Mail;
 import lombok.RequiredArgsConstructor;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -11,6 +12,7 @@ import org.springframework.stereotype.Service;
 public class MailService {
     private final JavaMailSender emailSender;
 
+    @Async
     public void sendMessage(Mail mail) {
         SimpleMailMessage message = new SimpleMailMessage();
         message.setTo(mail.getEmail());

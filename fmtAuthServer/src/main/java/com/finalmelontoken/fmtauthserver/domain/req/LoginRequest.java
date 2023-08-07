@@ -12,4 +12,5 @@ public class LoginRequest {
 
     private String password;
 
+    private String redirectUrl;
 }

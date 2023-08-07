@@ -1,7 +1,7 @@
 package com.finalmelontoken.fmtauthserver.service;
 
 import com.finalmelontoken.fmtauthserver.domain.AuthKey;
-import com.finalmelontoken.fmtauthserver.domain.TokenInfo;
+import com.finalmelontoken.fmtauthserver.domain.TokenResponse;
 import com.finalmelontoken.fmtauthserver.domain.User;
 import com.finalmelontoken.fmtauthserver.domain.req.JoinRequest;
 import com.finalmelontoken.fmtauthserver.domain.req.LoginRequest;
@@ -12,6 +12,7 @@ import com.finalmelontoken.fmtauthserver.util.JwtTokenProvider;
 import com.finalmelontoken.fmtauthserver.util.MailUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -23,14 +24,10 @@ public class UserService {
     private final AuthKeyRepository authKeyRepository;
     private final MailUtil mailUtil;
     private final JwtTokenProvider jwtTokenProvider;
+    private final BCryptPasswordEncoder encoder;
 
     public User findByEmail(String email) {
         return userRepository.findByEmail(email);
-    }
-
-
-    public User getUserByLoginId(String loginId) {
-        return userRepository.findByLoginId(loginId).orElse(null);
     }
 
     public String register(JoinRequest joinRequest) {
@@ -49,12 +46,11 @@ public class UserService {
         }
 
         authKeyRepository.deleteByEmail(joinRequest.getEmail());
-
-        userRepository.updateByPassword(joinRequest.getPassword());
+        userRepository.updateByPassword(encoder.encode(joinRequest.getPassword()));
         return "회원가입 완료";
     }
 
-    public TokenInfo login(LoginRequest loginRequest) {
+    public TokenResponse login(LoginRequest loginRequest) {
 
         String email = loginRequest.getEmail();
 
@@ -62,18 +58,18 @@ public class UserService {
             throw new GlobalException(HttpStatus.UNAUTHORIZED, "올바른 이메일을 입력해주세요");
         }
 
-        if (!userRepository.findByEmail(email).getPassword().equals(loginRequest.getPassword())) {
+        if (!encoder.matches(loginRequest.getPassword(), userRepository.findByEmail(email).getPassword())) {
             throw new GlobalException(HttpStatus.UNAUTHORIZED, "올바른 비밀번호를 입력해주세요");
         }
 
         return jwtTokenProvider.generateToken(loginRequest.getEmail());
     }
 
-    public TokenInfo refresh(String refreshToken) {
+    public TokenResponse refresh(String refreshToken) {
         if (jwtTokenProvider.validateRefreshToken(refreshToken)) {
             String email = jwtTokenProvider.getRefreshSubFromToken(refreshToken);
             String accessToken = jwtTokenProvider.generateToken(email).getAccessToken();
-            return new TokenInfo(
+            return new TokenResponse(
                     accessToken,
                     refreshToken
             );

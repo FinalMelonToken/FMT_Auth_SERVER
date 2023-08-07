@@ -1,23 +1,15 @@
 package com.finalmelontoken.fmtauthserver.util;
 
-import com.finalmelontoken.fmtauthserver.domain.TokenInfo;
+import com.finalmelontoken.fmtauthserver.domain.TokenResponse;
 import com.finalmelontoken.fmtauthserver.exception.GlobalException;
 import io.jsonwebtoken.*;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.core.authority.SimpleGrantedAuthority;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
 import java.security.Key;
-import java.util.Arrays;
-import java.util.Collection;
 import java.util.Date;
-import java.util.stream.Collectors;
 
 @Component
 public class JwtTokenProvider {
@@ -32,7 +24,7 @@ public class JwtTokenProvider {
         this.refreshKey = Keys.hmacShaKeyFor(refreshKeyBytes);
     }
 
-    public TokenInfo generateToken(String email) {
+    public TokenResponse generateToken(String email) {
 
         long now = (new Date()).getTime();
         String accessToken = Jwts.builder()
@@ -47,7 +39,7 @@ public class JwtTokenProvider {
                 .signWith(refreshKey, SignatureAlgorithm.HS256)
                 .compact();
 
-        return TokenInfo.builder()
+        return TokenResponse.builder()
                 .accessToken("Bearer " + accessToken)
                 .refreshToken("Bearer " + refreshToken)
                 .build();

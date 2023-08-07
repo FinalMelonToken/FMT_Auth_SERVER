@@ -14,4 +14,8 @@ public class MailUtil {
         Duration duration = Duration.between(instant, now);
         return duration.toMinutes() >= 5;
     }
+
+    public boolean isSchoolEmail(String email) {
+        return email.split("@")[1].equals("dgsw.hs.kr");
+    }
 }
