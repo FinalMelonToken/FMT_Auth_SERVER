@@ -6,27 +6,25 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
-import java.time.Instant;
 
-@Data
 @Entity
-@Builder
 @AllArgsConstructor
+@Data
+@Builder
 @NoArgsConstructor
-public class AuthKey {
+public class SecretKey {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @Column(nullable = false)
-    private String email;
+    private String clientKey;
 
     @Column(nullable = false)
-    private String authKey;
+    private String secretKey;
 
-    @Column(nullable = false)
-    private Instant createdTime;
-
-    @Column(nullable = false)
-    private Integer count;
+    public SecretKey(String clientKey, String secretKey) {
+        this.clientKey = clientKey;
+        this.secretKey = secretKey;
+    }
 }

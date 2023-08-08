@@ -19,26 +19,15 @@ public class User {
     private Long id;
 
     @Column(nullable = false)
-    private String loginId;
+    private String email;
 
     private String password;
 
-    @Column(nullable = false)
     private String nickname;
-
-    @Column(nullable = false)
-    private String email;
 
     @Column(nullable = false)
     private UserRole role;
 
     @Column(nullable = false)
     private Long point;
-
-    // OAuth
-    @Column(nullable = false)
-    private String provider;
-
-    @Column(nullable = false)
-    private String providerId;
 }

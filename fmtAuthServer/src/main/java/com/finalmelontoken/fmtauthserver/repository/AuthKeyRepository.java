@@ -15,4 +15,5 @@ public interface AuthKeyRepository extends JpaRepository<AuthKey, Long> {
     @Query("DELETE FROM AuthKey u WHERE u.email IN :email")
     public void deleteByEmail(@Param("email") String email);
     public AuthKey findByEmail(String email);
+
 }

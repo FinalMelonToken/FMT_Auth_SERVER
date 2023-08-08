@@ -1,11 +1,9 @@
 package com.finalmelontoken.fmtauthserver.controller;
 
 
-import com.finalmelontoken.fmtauthserver.domain.req.JoinRequest;
-import com.finalmelontoken.fmtauthserver.domain.req.LoginRequest;
+import com.finalmelontoken.fmtauthserver.domain.req.*;
 import com.finalmelontoken.fmtauthserver.domain.res.ResponseDto;
-import com.finalmelontoken.fmtauthserver.service.OAuthService;
-import com.finalmelontoken.fmtauthserver.service.UserService;
+import com.finalmelontoken.fmtauthserver.service.AuthService;
 import com.finalmelontoken.fmtauthserver.util.GoogleOAuthProvider;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -18,8 +16,7 @@ import java.io.IOException;
 @RequestMapping("/")
 @RequiredArgsConstructor
 public class RestAuthController {
-    private final UserService userService;
-    private final OAuthService oauthService;
+    private final AuthService authService;
     private final GoogleOAuthProvider googleOAuthProvider;
 
     @GetMapping("/google")
@@ -27,28 +24,38 @@ public class RestAuthController {
         response.sendRedirect(googleOAuthProvider.getOauthRedirectURL());
     }
 
-    /*@GetMapping ("/login/oauth2/code/google")
-    public ResponseEntity<?> registerSchoolMail(@RequestParam(name = "code") String code) throws IOException {
-        return ResponseDto.ok(oauthService.registerSchoolMail(code));
-    }*/
     @GetMapping ("/login/oauth2/code/google")
     public String registerSchoolMail(@RequestParam(name = "code") String code) throws IOException {
-        oauthService.registerSchoolMail(code);
+        authService.registerSchoolMail(code);
         return "<script>window.close();</script>";
+        // TODO: response.sendRedirect로 react웹서버로 전송
+    }
+
+    @PostMapping("/send-mail")
+    public ResponseEntity<?> sendMail(@RequestBody SendMailRequest sendMailRequest) {
+        return ResponseDto.ok(authService.sendMail(sendMailRequest));
     }
 
     @PostMapping("join")
     public ResponseEntity<?> join(@RequestBody JoinRequest joinRequest) {
-        return ResponseDto.ok(userService.register(joinRequest));
+        return ResponseDto.ok(authService.register(joinRequest));
     }
 
     @PostMapping("login")
     public ResponseEntity<?> login(@RequestBody LoginRequest loginRequest) {
-        return ResponseDto.ok(userService.login(loginRequest));
+        return ResponseDto.ok(authService.login(loginRequest));
     }
 
     @PostMapping("token")
-    public ResponseEntity<?> token(@RequestHeader("Authorization") String token) {
-        return ResponseDto.ok(userService.refresh(token.substring(7)));
+    public ResponseEntity<?> token(
+            @RequestHeader("Authorization") String token,
+            @RequestBody RefreshRequest refreshRequest
+            ) {
+        return ResponseDto.ok(authService.refresh(token.substring(7), refreshRequest));
+    }
+
+    @PostMapping("register-client")
+    public ResponseEntity<?> registerClient(@RequestBody RegisterClientRequest request) {
+        return ResponseDto.ok(authService.registerClient(request));
     }
 }

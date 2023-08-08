@@ -1,4 +1,4 @@
-package com.finalmelontoken.fmtauthserver.domain;
+package com.finalmelontoken.fmtauthserver.domain.res;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -11,6 +11,5 @@ import lombok.NoArgsConstructor;
 @Builder
 @Data
 public class TokenResponse {
-    private String accessToken;
-    private String refreshToken;
+    private String token;
 }
