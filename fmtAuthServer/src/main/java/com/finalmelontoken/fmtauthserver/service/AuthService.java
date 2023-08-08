@@ -6,7 +6,6 @@ import com.finalmelontoken.fmtauthserver.domain.req.*;
 import com.finalmelontoken.fmtauthserver.domain.res.LoginResponse;
 import com.finalmelontoken.fmtauthserver.domain.res.SendMailResponse;
 import com.finalmelontoken.fmtauthserver.domain.res.TokenResponse;
-import com.finalmelontoken.fmtauthserver.domain.res.ValidTokenResponse;
 import com.finalmelontoken.fmtauthserver.exception.GlobalException;
 import com.finalmelontoken.fmtauthserver.repository.AuthKeyRepository;
 import com.finalmelontoken.fmtauthserver.repository.SecretKeyRepository;
@@ -100,7 +99,7 @@ public class AuthService {
     }
 
     public void registerSchoolMail(String code) throws IOException {
-        GoogleUserInfoDto userInfo = getGoogleUserInfoDto(code);
+        GoogleUserInfo userInfo = getGoogleUserInfoDto(code);
         String email = userInfo.getEmail();
 
         // TODO : throw 터트리는 게 아니라 uri path return
@@ -118,11 +117,11 @@ public class AuthService {
         );
     }
 
-    public GoogleUserInfoDto getGoogleUserInfoDto(String code) throws JsonProcessingException {
+    public GoogleUserInfo getGoogleUserInfoDto(String code) throws JsonProcessingException {
         ResponseEntity<String> accessTokenResponse = googleOAuthProvider.requestAccessToken(code);
-        GoogleOAuthTokenDto oAuthTokenDto = googleOAuthProvider.getAccessToken(accessTokenResponse);
+        GoogleOAuthToken oAuthTokenDto = googleOAuthProvider.getAccessToken(accessTokenResponse);
         ResponseEntity<String> userInfoResponse = googleOAuthProvider.requestUserInfo(oAuthTokenDto);
-        GoogleUserInfoDto googleUserInfoDto = googleOAuthProvider.getUserInfo(userInfoResponse);
+        GoogleUserInfo googleUserInfoDto = googleOAuthProvider.getUserInfo(userInfoResponse);
         return googleUserInfoDto;
     }
 
@@ -152,9 +151,9 @@ public class AuthService {
         String email = loginRequest.getEmail();
 
         if (!userRepository.existsByEmail(email))
-            throw new GlobalException(HttpStatus.UNAUTHORIZED, "올바른 이메일을 입력해주세요");
+            throw new GlobalException(HttpStatus.BAD_REQUEST, "올바른 이메일을 입력해주세요");
         if (!encoder.matches(loginRequest.getPassword(), userRepository.findByEmail(email).getPassword()))
-            throw new GlobalException(HttpStatus.UNAUTHORIZED, "올바른 비밀번호를 입력해주세요");
+            throw new GlobalException(HttpStatus.BAD_REQUEST, "올바른 비밀번호를 입력해주세요");
 
         return new LoginResponse(
                 jwtTokenProvider.generateRefreshToken(email).getToken(),

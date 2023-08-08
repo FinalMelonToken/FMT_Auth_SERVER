@@ -1,6 +1,5 @@
 package com.finalmelontoken.fmtauthserver.domain.req;
 
-import lombok.AllArgsConstructor;
 import lombok.Data;
 
 @Data

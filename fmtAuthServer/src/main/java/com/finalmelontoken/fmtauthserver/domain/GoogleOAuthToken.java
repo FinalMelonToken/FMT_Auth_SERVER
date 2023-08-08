@@ -5,7 +5,7 @@ import lombok.Data;
 
 @Data
 @AllArgsConstructor
-public class GoogleOAuthTokenDto {
+public class GoogleOAuthToken {
     private String access_token;
     private Integer expires_in;
     private String scope;

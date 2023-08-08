@@ -2,8 +2,8 @@ package com.finalmelontoken.fmtauthserver.util;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.finalmelontoken.fmtauthserver.domain.GoogleOAuthTokenDto;
-import com.finalmelontoken.fmtauthserver.domain.GoogleUserInfoDto;
+import com.finalmelontoken.fmtauthserver.domain.GoogleOAuthToken;
+import com.finalmelontoken.fmtauthserver.domain.GoogleUserInfo;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.*;
@@ -54,13 +54,13 @@ public class GoogleOAuthProvider {
         return null;
     }
 
-    public GoogleOAuthTokenDto getAccessToken(ResponseEntity<String> response) throws JsonProcessingException {
+    public GoogleOAuthToken getAccessToken(ResponseEntity<String> response) throws JsonProcessingException {
         System.out.println("response,getOBody" + response.getBody());
-        GoogleOAuthTokenDto googleOAuthTokenDto = objectMapper.readValue(response.getBody(), GoogleOAuthTokenDto.class);
+        GoogleOAuthToken googleOAuthTokenDto = objectMapper.readValue(response.getBody(), GoogleOAuthToken.class);
         return googleOAuthTokenDto;
     }
 
-    public ResponseEntity<String> requestUserInfo(GoogleOAuthTokenDto oAuthTokenDto) {
+    public ResponseEntity<String> requestUserInfo(GoogleOAuthToken oAuthTokenDto) {
         HttpHeaders headers = new HttpHeaders();
         headers.add("Authorization", "Bearer " + oAuthTokenDto.getAccess_token());
 
@@ -70,8 +70,8 @@ public class GoogleOAuthProvider {
         return response;
     }
 
-    public GoogleUserInfoDto getUserInfo(ResponseEntity<String> response) throws JsonProcessingException {
-        GoogleUserInfoDto googleUserInfoDto = objectMapper.readValue(response.getBody(), GoogleUserInfoDto.class);
+    public GoogleUserInfo getUserInfo(ResponseEntity<String> response) throws JsonProcessingException {
+        GoogleUserInfo googleUserInfoDto = objectMapper.readValue(response.getBody(), GoogleUserInfo.class);
         return googleUserInfoDto;
     }
 }

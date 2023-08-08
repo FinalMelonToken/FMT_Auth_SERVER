@@ -24,8 +24,7 @@ public class SecurityConfig {
                 .csrf().disable()
                 .authorizeRequests()
                 .anyRequest().permitAll()
-                .and();
-        http
+                .and()
                 .addFilterBefore(new ExceptionHandlerFilter(), UsernamePasswordAuthenticationFilter.class);
         return http.build();
     }

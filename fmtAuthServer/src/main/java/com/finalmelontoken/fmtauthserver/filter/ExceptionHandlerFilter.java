@@ -15,6 +15,7 @@ import java.io.IOException;
 
 @RequiredArgsConstructor
 public class ExceptionHandlerFilter extends OncePerRequestFilter {
+
     @Override
     protected void doFilterInternal(
             HttpServletRequest request,
