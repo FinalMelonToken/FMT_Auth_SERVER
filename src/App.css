@@ -1,38 +1,107 @@
-.App {
-  text-align: center;
+body {
+  margin: 0;
+  background-color: #00365c;
 }
 
-.App-logo {
-  height: 40vmin;
-  pointer-events: none;
-}
-
-@media (prefers-reduced-motion: no-preference) {
-  .App-logo {
-    animation: App-logo-spin infinite 20s linear;
-  }
-}
-
-.App-header {
-  background-color: #282c34;
-  min-height: 100vh;
+#Container {
+  position: relative;
   display: flex;
-  flex-direction: column;
-  align-items: center;
+  width: 100vw;
+  height: 100vh;
   justify-content: center;
-  font-size: calc(10px + 2vmin);
+  align-items: center;
+  background-color: #00365c;
+}
+
+#Box {
+  font-size: 0;
+  position: relative;
+  width: 500px;
+  height: 700px;
+  text-align: center;
+  justify-items: center;
+  background-color: white;
+  border-radius: 0.75vw;
+  animation: onLoad 0.5s;
+}
+
+#Header {
+  padding: 15px;
+  margin-top: 60px;
+  font-size: 26px;
+}
+
+.Div {
+  display: inline-block;
+  width: 395.2px;
+  height: 110px;
+}
+
+.Label {
+  display: block;
+  font-size: 20px;
+  font-weight: 700;
+  text-align: left;
+  line-height: 40px;
+}
+
+.Input {
+  width: 375px;
+  height: 50px;
+  font-size: 16px;
+  padding-left: 17.5px;
+  border: 1px solid #1a1a1b;
+  border-radius: 0.75vw;
+}
+
+#RegInput {
+  width: 280px;
+  height: 50px;
+  font-size: 16px;
+  padding-left: 17.5px;
+  border: 1px solid #1a1a1b;
+  border-radius: 0.75vw;
+}
+
+#Send {
+  width: 83.5px;
+  height: 55px;
+  border: 0;
+  font-size: 16px;
+  margin-left: 10px;
   color: white;
+  background-color: #00365c;
+  border-radius: 0.75vw;
+  cursor: pointer;
 }
 
-.App-link {
-  color: #61dafb;
+#Submit {
+  position: relative;
+  border: 0;
+  top: 10px;
+  width: 395px;
+  height: 55px;
+  font-size: 16px;
+  color: white;
+  background-color: #00365c;
+  border-radius: 0.75vw;
+  cursor: pointer;
 }
 
-@keyframes App-logo-spin {
-  from {
-    transform: rotate(0deg);
+#Footer {
+  position: relative;
+  font-size: 16px;
+  top: 75px;
+  display: block;
+  text-decoration: none;
+}
+
+@keyframes onLoad {
+  0% {
+    opacity: 0;
   }
-  to {
-    transform: rotate(360deg);
+
+  100% {
+    opacity: 1;
   }
 }
