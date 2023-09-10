@@ -1,0 +1,53 @@
+server:
+  port: 8080
+spring:
+  datasource:
+    url: ${dburl}
+    username: ${dbid}
+    password: ${dbpw}
+    driver-class-name: com.mysql.cj.jdbc.Driver
+  jpa:
+    hibernate:
+      ddl-auto: update
+    show-sql: true
+  mail:
+    host: smtp.google.com
+    port: 487
+    username: hhhello0507smtp@gmail.com
+    password: ${smtppw}
+    properties:
+      mail:
+        stmp:
+          starttls:
+            enable: true
+          auth: true
+  security:
+    user:
+      password: 1234
+      name: admin
+
+springdoc:
+  swagger-ui:
+    path: /swagger-ui.html
+    groups-order: DESC
+    operationsSorter: method
+    disable-swagger-default-url: true
+    display-request-duration: true
+    version: 1.0.0
+  api-docs:
+    path: /api-docs
+  show-actuator: true
+  default-consumes-media-type: application/json
+  default-produces-media-type: application/json
+  paths-to-match: /api/v1/**
+  packages-to-scan: com.finalmelontoken.fmtauthserver
+
+app:
+  google:
+    clientId: ${googleclientid}
+    redirect: http://localhost:8080/login/oauth2/code/google
+    secret: ${googlepw}
+
+jwt:
+  refresh:
+    secret: ${jwtpw}
