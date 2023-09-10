@@ -2,9 +2,9 @@ server:
   port: 8080
 spring:
   datasource:
-    url: ${dburl}
-    username: ${dbid}
-    password: ${dbpw}
+    url: ${DBURL}
+    username: ${DBID}
+    password: ${DBPW}
     driver-class-name: com.mysql.cj.jdbc.Driver
   jpa:
     hibernate:
@@ -14,7 +14,7 @@ spring:
     host: smtp.google.com
     port: 487
     username: hhhello0507smtp@gmail.com
-    password: ${smtppw}
+    password: ${SMTPPW}
     properties:
       mail:
         stmp:
@@ -44,10 +44,10 @@ springdoc:
 
 app:
   google:
-    clientId: ${googleclientid}
+    clientId: ${GOOGLECLIENTID}
     redirect: http://localhost:8080/login/oauth2/code/google
-    secret: ${googlepw}
+    secret: ${GOOGLEPW}
 
 jwt:
   refresh:
-    secret: ${jwtpw}
+    secret: ${JWTPW}
