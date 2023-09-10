@@ -1,6 +1,5 @@
 application.yml
-application-local-lkh.yml
-application-local-kdc.yml
+application-lkh.yml
 application-product.yml
 
 HELP.md

@@ -3,9 +3,7 @@ package com.finalmelontoken.fmtauthserver.service;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.finalmelontoken.fmtauthserver.domain.*;
 import com.finalmelontoken.fmtauthserver.domain.req.*;
-import com.finalmelontoken.fmtauthserver.domain.res.LoginResponse;
-import com.finalmelontoken.fmtauthserver.domain.res.SendMailResponse;
-import com.finalmelontoken.fmtauthserver.domain.res.TokenResponse;
+import com.finalmelontoken.fmtauthserver.domain.res.*;
 import com.finalmelontoken.fmtauthserver.exception.GlobalException;
 import com.finalmelontoken.fmtauthserver.repository.AuthKeyRepository;
 import com.finalmelontoken.fmtauthserver.repository.SecretKeyRepository;
@@ -125,7 +123,7 @@ public class AuthService {
         return googleUserInfoDto;
     }
 
-    public String register(JoinRequest joinRequest) {
+    public JoinResponse register(JoinRequest joinRequest) {
 
         String email = joinRequest.getEmail();
         if (!userRepository.existsByEmail(email))
@@ -143,7 +141,7 @@ public class AuthService {
 
         authKeyRepository.deleteByEmail(email);
         userRepository.updateByPassword(encoder.encode(joinRequest.getPassword()));
-        return "회원가입 완료";
+        return new JoinResponse("회원가입 완료");
     }
 
     public LoginResponse login(LoginRequest loginRequest) {
@@ -161,7 +159,7 @@ public class AuthService {
         );
     }
 
-    public TokenResponse refresh(String refreshToken, RefreshRequest refreshRequest) {
+    public TokenResponse refresh(String refreshToken, TokenRequest refreshRequest) {
         jwtTokenProvider.validateRefreshToken(refreshToken);
 
         String email = jwtTokenProvider.getRefreshSubFromToken(refreshToken);
@@ -170,7 +168,7 @@ public class AuthService {
         return response;
     }
 
-    public String registerClient(RegisterClientRequest request) {
+    public RegisterClientResponse registerClient(RegisterClientRequest request) {
         if (!request.getPhysicalSecretKey().equals("이잉"))
             throw new GlobalException(HttpStatus.UNAUTHORIZED, "물리적 키가 틀렸습니다");
         if (secretKeyRepository.existsByClientKey(request.getClientKey()))
@@ -186,6 +184,6 @@ public class AuthService {
                         .secretKey(encodedSecretKey)
                         .build()
         );
-        return "success - " + request.getClientKey();
+        return new RegisterClientResponse("success - " + request.getClientKey());
     }
 }

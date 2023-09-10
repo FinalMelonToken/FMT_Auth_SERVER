@@ -7,9 +7,7 @@ import lombok.Data;
 @Data
 @AllArgsConstructor
 public class LoginResponse {
-    @Schema(description = "refresh token")
     private String token;
 
-    @Schema(description = "리다이렉션 URL")
     private String redirectUrl;
 }

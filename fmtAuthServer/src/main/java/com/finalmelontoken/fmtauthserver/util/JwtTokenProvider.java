@@ -1,7 +1,7 @@
 package com.finalmelontoken.fmtauthserver.util;
 
 import com.finalmelontoken.fmtauthserver.domain.SecretKey;
-import com.finalmelontoken.fmtauthserver.domain.req.RefreshRequest;
+import com.finalmelontoken.fmtauthserver.domain.req.TokenRequest;
 import com.finalmelontoken.fmtauthserver.domain.res.TokenResponse;
 import com.finalmelontoken.fmtauthserver.exception.GlobalException;
 import com.finalmelontoken.fmtauthserver.repository.SecretKeyRepository;
@@ -39,7 +39,7 @@ public class JwtTokenProvider {
                 .build();
     }
 
-    public TokenResponse generateAccessToken(String email, RefreshRequest request) {
+    public TokenResponse generateAccessToken(String email, TokenRequest request) {
         SecretKey secretKey = secretKeyRepository.findByClientKey(request.getClientKey());
         if (secretKey == null)
             throw new GlobalException(HttpStatus.BAD_REQUEST, "존재하지 않는 Client Key");
