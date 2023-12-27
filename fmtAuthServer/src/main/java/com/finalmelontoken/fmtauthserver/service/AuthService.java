@@ -47,9 +47,10 @@ public class AuthService {
         String email = sendMailRequest.getEmail();
         int count = 0;
 
-        if (!userRepository.existsByEmail(email))
+        if (!userRepository.existsByEmail(email)) {
             throw new GlobalException(HttpStatus.BAD_REQUEST, "이메일 인증을 먼저 해주세요");
-        else if (authKeyRepository.existsAuthKeyByEmail(email)){
+
+        } else if (authKeyRepository.existsAuthKeyByEmail(email)){
             Instant createdTime = authKeyRepository.findByEmail(email).getCreatedTime();
             if (!mailUtil.isToday(createdTime)) {
                 authKeyRepository.deleteByEmail(email);
